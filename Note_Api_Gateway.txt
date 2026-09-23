@@ -1,0 +1,8 @@
+The correct startup order in IntelliJ, based on dependencies:
+
+1. naming-server (port 8761) — Eureka registry; everything else registers with it, so it must be up first.
+2. spring-cloud-config-server (port 8888) — serves config to the others (optional at runtime, but start early so services get their external config).
+3. limits-service — independent service, registers with Eureka.
+4. currency-exchange-service (port 8000) — registers with Eureka; conversion service calls it via Feign, so start it before conversion.
+5. currency-conversion-service (port 8100) — registers with Eureka; depends on exchange-service at runtime (Feign call).
+6. api-gateway (port 8765) — last; it discovers all services via Eureka, so start it after the others are registered.
